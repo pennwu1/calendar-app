@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import Week from '../components/Week';
+import Week from '../containers/Week';
 import Day from '../components/Day';
+import { connect } from 'react-redux';
+import { getWeeks } from '../actions/actions';
+
 import classNames from 'classnames/bind';
 import styles from './scss/Calendar.scss';
 
 const moment = require('moment');
 const cx = classNames.bind(styles);
 
-export default class Calendar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      weeks: renderWeeks()
-    }
-  }
+class Calendar extends Component {
   
+  componentDidMount() {
+    this.props.getWeeks();
+  }
   render() {
     const headings = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const headingColumns = headings.map((day) => {
@@ -22,8 +22,7 @@ export default class Calendar extends Component {
         <td key={day}>{day}</td>
       );
     });
-    const weeks = renderWeeks();
-    const weekColumns = weeks.map((week) => {
+    const weekColumns = this.props.weeks.map((week) => {
       return (
         <Week key={week} week={week} />
       );
@@ -41,18 +40,17 @@ export default class Calendar extends Component {
   }
 }
 
-function renderWeeks() {
-  let firstWeek = moment().clone().startOf('month').startOf('week');
-  let lastWeek = moment().clone().endOf('month').startOf('week');
-  return weeksInMonth(firstWeek, lastWeek);
+function mapState(state) {
+  return {
+    weeks: state.date.currentWeeks
+  }
 }
 
-function weeksInMonth(startDate, endDate) {
-  const dates = [];
-  let now = startDate.clone();
-  while (now.isBefore(endDate) || now.isSame(endDate)) {
-    dates.push(now.format('M/D/YYYY'));
-    now.add(1, 'weeks');
+function mapDispatch(dispatch) {
+  // reducers are pure functions
+  return {
+    getWeeks: () => dispatch(getWeeks())
   }
-  return dates;
 }
+
+export default connect(mapState, mapDispatch)(Calendar);

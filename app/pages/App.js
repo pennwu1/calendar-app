@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../containers/Header';
-import Calendar from '../components/Calendar';
+import Calendar from '../containers/Calendar';
 
 import classNames from 'classnames';
 import styles from './scss/App.scss';
