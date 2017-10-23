@@ -3,7 +3,7 @@
 Calendar App built with React, Redux, SASS, Webpack. 
 
 ## To Do List
-- [ ] Weekly Calendar View
+- [x] Monthly Calendar View
 - [ ] Event Details Page
 - [ ] Add / Remove Events
 - [ ] Styling
