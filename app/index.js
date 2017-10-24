@@ -5,7 +5,8 @@ import { AppContainer } from 'react-hot-loader';
 import App from './pages/App';
 import configureStore from './store/configureStore';
 
-const store = configureStore();
+const initialState = {};
+const store = configureStore(initialState);
 
 render(
   <AppContainer>

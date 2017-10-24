@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 class Calendar extends Component {
   
   componentDidMount() {
-    this.props.getWeeks();
+    this.props.getWeeks(this.props.month);
   }
   render() {
     const headings = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -22,9 +22,9 @@ class Calendar extends Component {
         <td key={day}>{day}</td>
       );
     });
-    const weekColumns = this.props.weeks.map((week) => {
+    const weekColumns = this.props.weeks.map((week, i) => {
       return (
-        <Week key={week} week={week} />
+        <Week key={week} week={week} weekNumber={i}/>
       );
     });
     return (
@@ -42,6 +42,7 @@ class Calendar extends Component {
 
 function mapState(state) {
   return {
+    month: state.date.currentMonth,
     weeks: state.date.currentWeeks
   }
 }
@@ -49,7 +50,7 @@ function mapState(state) {
 function mapDispatch(dispatch) {
   // reducers are pure functions
   return {
-    getWeeks: () => dispatch(getWeeks())
+    getWeeks: (month) => dispatch(getWeeks(month))
   }
 }
 

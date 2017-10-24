@@ -1,18 +1,28 @@
 const moment = require('moment');
-import { GET_DATE, GET_WEEKS, GET_DAYS } from '../actions/actions';
+import { GET_DATE, GET_MONTH, LAST_MONTH, NEXT_MONTH, GET_WEEKS, GET_DAYS } from '../actions/actions';
 
 const initialState = {
-  currentDate: moment(),
+  currentMonth: moment(),
   currentWeeks: [],
-  currentDays: []
+  currentDays: {}
 };
 
 export const date = function(state = initialState, action) {
   switch(action.type) {
-    case GET_DATE:
+    case GET_MONTH:
       return {
         ...state,
-        currentDate: action.date
+        currentMonth: action.month
+      }
+    case LAST_MONTH:
+      return {
+        ...state,
+        currentMonth: action.month
+      }
+    case NEXT_MONTH:
+      return {
+        ...state,
+        currentMonth: action.month
       }
     case GET_WEEKS:
       return {
@@ -20,9 +30,12 @@ export const date = function(state = initialState, action) {
         currentWeeks: action.weeks
       }
     case GET_DAYS:
+      const newState = {
+        ...state
+      };
+      newState.currentDays[action.weekNumber] = action.days;
       return {
-        ...state,
-        currentDays: action.days
+        ...newState
       }
     default:
       return state;

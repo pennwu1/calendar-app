@@ -5,14 +5,14 @@ import { getDays } from '../actions/actions';
 const moment = require('moment');
 
 class Week extends Component {
-  componentDidMount() {
-    this.props.getDays(this.props.weeks);
+  componentWillMount() {
+    this.props.getDays(this.props.week, this.props.weekNumber);
   }
   render() {
-    const days = this.props.days;
+    const days = this.props.days[this.props.weekNumber];
     const dayColumns = days.map((day) => {
       return (
-        <Day key={day} day={moment(day).format('D')}/>
+        <Day key={day} day={day.format('D')}/>
       );
     });
     return (
@@ -23,14 +23,13 @@ class Week extends Component {
 
 function mapState(state) {
   return {
-    weeks: state.date.currentWeeks,
     days: state.date.currentDays
   }
 }
 
 function mapDispatch(dispatch) {
   return {
-    getDays: (weeks) => dispatch(getDays(weeks))
+    getDays: (week, weekNumber) => dispatch(getDays(week, weekNumber))
   }
 }
 
