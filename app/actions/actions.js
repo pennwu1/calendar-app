@@ -1,77 +1,94 @@
-const moment = require('moment');
-
-export const GET_MONTH = 'GET_MONTH';
-
-export const getMonth = function() {
+// execute last month with createCalendar
+export const SELECT_DAY = 'SELECT_DAY';
+export const selectDay = function(day) {
   return {
-    type: GET_MONTH,
-    month: moment()
+    type: SELECT_DAY,
+    selectedDay: day
   }
 }
 
 export const LAST_MONTH = 'LAST_MONTH';
 
-export const lastMonth = function(month) {
-  let lastMonth = month.clone().subtract(1, 'months');
+export const lastMonth = function(year, month) {
+  if (month === 1) {
+    --year;
+    month = 12;
+  } else --month;
   return {
     type: LAST_MONTH,
-    month: lastMonth
+    calendar: createCalendar(year, month)
   }
 }
 
+// execute next month with createCalendar
 export const NEXT_MONTH = 'NEXT_MONTH';
 
-export const nextMonth = function(month) {
-  let nextMonth = month.clone().add(1, 'months');
+export const nextMonth = function(year, month) {
+  if (month === 12) {
+    ++year;
+    month = 0;
+  } else ++month;
   return {
     type: NEXT_MONTH,
-    month: nextMonth
+    calendar: createCalendar(year, month)
   }
 }
 
-export const GET_WEEKS = 'GET_WEEKS';
-
-export const getWeeks = function (month) {
-  let firstWeek = month.startOf('month').startOf('week');
-  let lastWeek = month.clone().endOf('month').startOf('week');
-  let weeks = weeksInMonth(firstWeek, lastWeek);
-  console.log('weeks', weeks);
+// return new state for calendar
+export const createCalendar = function(year, month) {
+  const firstDay = getFirstDayInMonth(year, month);
+  const numDays = getDaysInMonth(year, month);
+  const dayMatrix = buildDayMatrix(firstDay, numDays);
   return {
-    type: GET_WEEKS,
-    weeks
+    selectedDay: 1,
+    year,
+    month,
+    firstDay,
+    numDays,
+    dayMatrix
   }
 }
 
-export const GET_DAYS = 'GET_DAYS';
+// return a nested array where position corresponds to day of week
+function buildDayMatrix(firstDay, numDays) {
+  let matrix = [];
+  let weeks = Math.ceil(numDays + firstDay) / 7;
+  let firstWeek = [];
+  let i = 1;
 
-export const getDays = function (week, weekNumber) {
-  let firstDay = week.clone().startOf('week');
-  let lastDay = week.clone().endOf('week');
-  let days = daysInWeek(firstDay, lastDay);
-  console.log('days', days);
-  return {
-    type: GET_DAYS,
-    days,
-    weekNumber
+  // add first week to matrix
+  while (firstWeek.length < 7) {
+    if (firstWeek.length < firstDay) firstWeek.push(null);
+    else firstWeek.push(i++);
   }
+  matrix.push(firstWeek);
+  
+  // add weeks - 1 to matrix
+  while (matrix.length < weeks - 1) {
+    let nextWeek = [];
+    while (nextWeek.length < 7) {
+      nextWeek.push(i++);
+    }
+    matrix.push(nextWeek);
+  }
+
+  // add last week to matrix
+  let lastWeek = [];
+  while (lastWeek.length < 7) {
+    if (i > numDays) lastWeek.push(null);
+    else lastWeek.push(i++);
+  }
+  matrix.push(lastWeek);
+
+  return matrix;
 }
 
-function weeksInMonth(startDate, endDate) {
-  const dates = [];
-  let now = startDate.clone();
-  while (now.isBefore(endDate) || now.isSame(endDate)) {
-    dates.push(now.clone());
-    now.add(1, 'weeks');
-  }
-  return dates;
+// get # of days in given month
+function getDaysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
 }
 
-function daysInWeek(startDate, endDate) {
-  const dates = [];
-  let now = startDate.clone();
-  while (now.isBefore(endDate) || now.isSame(endDate)) {
-    dates.push(now.clone());
-    now.add(1, 'days');
-  }
-  return dates;
+// get position of first day in month
+function getFirstDayInMonth(year, month) {
+  return new Date(year, month, 1).getDay();
 }
