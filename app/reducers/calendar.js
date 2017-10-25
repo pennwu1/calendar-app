@@ -1,8 +1,8 @@
 const moment = require('moment');
 import { SELECT_DAY, LAST_MONTH, NEXT_MONTH, createCalendar } from '../actions/actions';
 
-const year = new Date().getYear();
-const month = new Date().getMonth() + 1;
+const year = new Date().getFullYear();
+const month = new Date().getMonth();
 
 const initialState = createCalendar(year, month);
 

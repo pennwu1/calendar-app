@@ -13,7 +13,7 @@ export default class Calendar extends Component {
   }
   renderWeek(week, i) {
     return (
-      <tr key={i}>
+      <tr key={i} className={cx('weeks')}>
         {
           week.map((day, j) => {
           if (day) {
@@ -27,12 +27,12 @@ export default class Calendar extends Component {
     )
   }
 render() {
-  const headings = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const headings = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   const { dayMatrix } = this.props.calendar;
   const { selectDay } = this.props.actions;
-  const headingColumns = headings.map((day) => {
+  const headingColumns = headings.map((day, i) => {
     return (
-      <td key={day}>{day}</td>
+      <td key={i}>{day}</td>
     );
   });
   return (
